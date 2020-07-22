@@ -6,7 +6,10 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "attribution": "generate-attribution && mv oss-attribution/attribution.txt LICENSE-THIRD && rm -rf oss-attribution"
+    "attribution": "generate-attribution && mv oss-attribution/attribution.txt LICENSE-THIRD && rm -rf oss-attribution",
+    "package": "aws cloudformation package --template-file ./template.yaml --s3-bucket  meetbel-cf-templates --s3-prefix emailSignUpWebsite  --region eu-west-2 --output-template-file ./email-sign-in-packaged.yaml",
+    "deploy": "aws cloudformation deploy --template-file ./email-sign-in-packaged.yaml  --stack-name emailSignInWebSite --region eu-west-2 --capabilities CAPABILITY_IAM",
+    "publish": "npm run package && npm run deploy && echo Finished!!"
   },
   "private": false,
   "dependencies": {
