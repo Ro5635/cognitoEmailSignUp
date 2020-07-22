@@ -66,7 +66,7 @@ export class SignUpComponent implements OnInit  {
     } catch (err) {
       if (err.code === 'UsernameExistsException') {
           console.log('User Account For Provided Email Address is Already Registered Within The UserPool');
-          this.router.navigate([`/sign-in`], {queryParams: {email: this.email.value, state: this.state}});
+          this.router.navigate([`/sign-in`], {queryParams: {email: this.email.value, state: this.state, redirect_uri: this.redirectUri}});
       }
       this.errorMessage_.next(err.message || err);
     } finally {
