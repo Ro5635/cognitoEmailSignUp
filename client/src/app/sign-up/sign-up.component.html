@@ -22,7 +22,7 @@
 
   <mat-card-actions>
     <div fxFlex></div>
-    <button mat-stroked-button color="primary" (click)="signup()">
+    <button mat-stroked-button color="primary" (click)="signUp()">
       <div fxFlex></div>
       <div *ngIf="!(busy | async)">SIGN UP</div>
       <mat-spinner *ngIf="busy | async" [diameter]="35"></mat-spinner>
