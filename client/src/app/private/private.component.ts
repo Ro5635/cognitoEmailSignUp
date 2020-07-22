@@ -5,6 +5,7 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { AuthService } from '../auth.service';
 import { BehaviorSubject } from 'rxjs';
 import { FormGroup, FormControl } from '@angular/forms';
+import {IdToken} from '../IdToken';
 
 @Component({
   selector: 'app-private',
@@ -14,36 +15,28 @@ import { FormGroup, FormControl } from '@angular/forms';
 })
 export class PrivateComponent implements OnInit {
 
-  private userDetails_: BehaviorSubject<any[]> = new BehaviorSubject(undefined);
-  public userDetails = this.userDetails_.asObservable();
-  public userDetailsForm = new FormGroup({});
-
-  private busy_ = new BehaviorSubject(false);
-  public busy = this.busy_.asObservable();
-
   private errorMessage_ = new BehaviorSubject('');
   public errorMessage = this.errorMessage_.asObservable();
 
   constructor(private auth: AuthService) { }
 
   ngOnInit() {
-    this.getUserDetails();
+    this.returnUserToCallingClientWithToken();
   }
 
-  public async getUserDetails() {
-    this.busy_.next(true);
+  public async returnUserToCallingClientWithToken() {
     this.errorMessage_.next('');
     try {
-      const userDetails = await this.auth.getUserDetails();
-      userDetails.forEach(detail => {
-        const control = new FormControl(detail.getValue());
-        this.userDetailsForm.addControl(detail.getName(), control);
-      });
-      this.userDetails_.next(userDetails);
+      const { idToken }: { idToken: IdToken } = await this.auth.getIdTokenFromSession();
+      const { jwtToken } = idToken;
+
+      const state = '__STATE__';
+      const baseUrl = 'https://uat.meetbel.com';
+
+      console.log('Returning user top the app with id_token and state');
+      window.location.href = `${baseUrl}/sign-up#id_token=${jwtToken}&state=${state}`;
     } catch (err) {
       this.errorMessage_.next(err.message || err);
-    } finally {
-      this.busy_.next(false);
     }
   }
 }
