@@ -1,0 +1,107 @@
+# Creates the AWS Infrastructure for the website.
+# CloudFront Distribution
+# S3 Bucket
+# DNS Configuration
+
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Mappings:
+  prod:
+    config:
+      emailSignInDomainName: email-sign-in.meetbel.com
+      staticAssettsWebsiteBucketname:  meetbel-email-sign-in-static-assets
+
+Resources:
+  staticAssetsWebsiteBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: Private
+      BucketName: !FindInMap [prod, config, staticAssettsWebsiteBucketname]
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
+
+  staticSiteSourceBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref staticAssetsWebsiteBucket
+      PolicyDocument:
+        Id: staticWebsiteMeetBelBucketPolicy
+        Version: 2012-10-17
+        Statement:
+          - Action:
+              - "s3:GetObject"
+            Effect: "Allow"
+            Resource:
+              Fn::Join:
+                - ""
+                - - "arn:aws:s3:::"
+                  - Ref: "staticAssetsWebsiteBucket"
+                  - "/*"
+            Principal:
+              AWS:
+                Fn::Join:
+                  - ""
+                  - - "arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity "
+                    - Ref: staticWebSiteSiteSourceBucketOriginAccessIdentity
+                    - ""
+
+  staticWebSiteSiteSourceBucketOriginAccessIdentity:
+    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+    Properties:
+      CloudFrontOriginAccessIdentityConfig:
+        Comment: 'staticAssetsWebsiteBucket email-sign-in Origin Access Identity For CloudFront Distribution'
+
+  websiteCloudFrontDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Aliases:
+          - !FindInMap [prod, config, emailSignInDomainName]
+        Origins:
+          - DomainName: !GetAtt [staticAssetsWebsiteBucket, RegionalDomainName]
+            Id: 'staticWebsiteSourceBucketOrigin'
+            S3OriginConfig:
+              OriginAccessIdentity:
+                "Fn::Join": [ "", ["origin-access-identity/cloudfront/",
+                                   { "Ref": "staticWebSiteSiteSourceBucketOriginAccessIdentity" }]]
+        Enabled: true
+        IPV6Enabled: true
+        Comment: "Public website deployment of email-sign-in web distribution"
+        DefaultRootObject: index.html
+        Logging:
+          IncludeCookies: 'false'
+          Bucket: !ImportValue environmentStack--meetBelWebLogBucketRegionalDomainName
+          Prefix: 'prod/emailSignIn/CloudFront/'
+        DefaultCacheBehavior:
+          TargetOriginId: 'staticWebsiteSourceBucketOrigin'
+          AllowedMethods:
+            - GET
+            - HEAD
+            - OPTIONS
+          ForwardedValues:
+            QueryString: 'false'
+          ViewerProtocolPolicy: 'redirect-to-https'
+        # CloudFront price classes described at: http://aws.amazon.com/cloudfront/pricing/
+        # At time of writing Price Class 100 is EU and North America
+        PriceClass: PriceClass_100
+        ViewerCertificate:
+          AcmCertificateArn: !ImportValue environmentStack--meetBelComSSLCertificateUSEast1
+          MinimumProtocolVersion: 'TLSv1.2_2018'
+          SslSupportMethod: 'sni-only'
+
+  vpcStaticWebAssetsCloudFrontDomain:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      Type: "A"
+      Comment: 'MeetBel Website CloudFront Distribution'
+      HostedZoneId: !ImportValue environmentStack--meetBelComHostedZoneID
+      Name: !FindInMap [prod, config, emailSignInDomainName]
+      AliasTarget:
+        DNSName: !GetAtt [websiteCloudFrontDistribution, DomainName]
+        # Z2FDTNDATAQYW2 is always the hosted zone ID when you create an alias record that routes traffic to a CloudFront distribution.
+        # Because AWS is built with AWS. 🤯
+        HostedZoneId: Z2FDTNDATAQYW2
