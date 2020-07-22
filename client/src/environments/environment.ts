@@ -7,6 +7,7 @@ export const environment = {
   region: 'eu-west-2',
   userPoolId: 'eu-west-2_3nSqamtCB',
   userPoolWebClientId: '576uki4p6479b1cdftk1r76pmk',
+  redirectUriAllowList: ['https://uat.meetbel.com/sign-up'],
 };
 
 /*
