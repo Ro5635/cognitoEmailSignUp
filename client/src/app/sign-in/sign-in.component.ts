@@ -10,17 +10,19 @@ import {FormControl} from '@angular/forms';
 @Component({
   selector: 'app-sign-in',
   templateUrl: './sign-in.component.html',
-  styleUrls: ['./sign-in.component.css'],
+  styleUrls: ['./sign-in.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SignInComponent implements OnInit {
 
-  public showEmailCollectionForm = false;
   public email = new FormControl('');
   public state;
 
   private busy_ = new BehaviorSubject(false);
   public busy = this.busy_.asObservable();
+
+  private shouldShowEmailCollectionForm_ = new BehaviorSubject(false);
+  public shouldShowEmailCollectionForm = this.busy_.asObservable();
 
   private errorMessage_ = new BehaviorSubject('');
   public errorMessage = this.errorMessage_.asObservable();
@@ -29,7 +31,7 @@ export class SignInComponent implements OnInit {
       if (this.email.value) {
         this.signIn();
       } else {
-          this.showEmailCollectionForm = true;
+          this.shouldShowEmailCollectionForm_.next(true);
       }
   }
 
@@ -48,6 +50,8 @@ export class SignInComponent implements OnInit {
       this.router.navigate(['/enter-secret-code']);
     } catch (err) {
       this.errorMessage_.next(err.message || err);
+      this.shouldShowEmailCollectionForm_.next(true);
+
     } finally {
       this.busy_.next(false);
     }
