@@ -33,7 +33,7 @@ export class PrivateComponent implements OnInit {
       const state = '__STATE__';
       const baseUrl = 'https://uat.meetbel.com';
 
-      console.log('Returning user top the app with id_token and state');
+      console.log('Returning user to the app with id_token and state');
       window.location.href = `${baseUrl}/sign-up#id_token=${jwtToken}&state=${state}`;
     } catch (err) {
       this.errorMessage_.next(err.message || err);
