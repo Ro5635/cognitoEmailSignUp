@@ -100,13 +100,7 @@ export class AnswerChallengeComponent implements OnInit, OnDestroy, AfterContent
         .join('');
       const loginSucceeded = await this.auth.answerCustomChallenge(answer);
       if (loginSucceeded) {
-        const { idToken }: { idToken: IdToken } = await this.auth.getIdTokenFromSession();
-
-        const { jwtToken } = idToken;
-        const state = '__STATE__';
-        const baseUrl = 'https://uat.meetbel.com';
-        console.log(`${baseUrl}/sign-up?id_token=${jwtToken}&state=${state}`);
-        window.location.href = `${baseUrl}/sign-up#id_token=${jwtToken}&state=${state}`;
+        this.router.navigate(['/private']);
       } else {
         this.errorMessage_.next('That\'s not the right code');
       }

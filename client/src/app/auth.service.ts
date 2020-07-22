@@ -31,11 +31,6 @@ export class AuthService {
 
   public async answerCustomChallenge(answer: string) {
     this.cognitoUser = await Auth.sendCustomChallengeAnswer(this.cognitoUser, answer);
-    // const currentSession = await Auth.currentSession();
-    // console.log('test');
-    // console.log(JSON.stringify(currentSession));
-    // console.log('after');
-
 
     return this.isAuthenticated();
   }
