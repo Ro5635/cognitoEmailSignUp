@@ -3,7 +3,7 @@
    SPDX-License-Identifier: MIT-0
 -->
 
-<div fxFlex="1 1 auto" class="emailDispatchNotification" *ngIf="!shouldShowEmailCollectionForm">
+<div fxFlex="1 1 auto" class="emailDispatchNotification" *ngIf="!(shouldShowEmailCollectionForm | async)">
     <div class="emailDispatchNotification_spinner">
         <mat-spinner></mat-spinner>
     </div>
@@ -12,7 +12,7 @@
     </div>
 </div>
 
-<mat-card fxFlex="1 1 auto" ngClass="app-card" *ngIf="shouldShowEmailCollectionForm">
+<mat-card fxFlex="1 1 auto" ngClass="app-card" *ngIf="(shouldShowEmailCollectionForm | async)">
 
     <mat-card-header>
         <mat-icon mat-card-avatar>lock</mat-icon>

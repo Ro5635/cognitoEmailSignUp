@@ -23,7 +23,7 @@ export class SignUpComponent implements OnInit  {
   public busy = this.busy_.asObservable();
 
   private shouldShowEmailCollectionForm_ = new BehaviorSubject(false);
-  public shouldShowEmailCollectionForm = this.busy_.asObservable();
+  public shouldShowEmailCollectionForm = this.shouldShowEmailCollectionForm_.asObservable();
 
   private errorMessage_ = new BehaviorSubject('');
   public errorMessage = this.errorMessage_.asObservable();
@@ -49,8 +49,8 @@ export class SignUpComponent implements OnInit  {
       }
 
       if (!this.redirectUri) {
-          // Handle the error in some way
-          console.log('The supplied redirect_uri eas invalid');
+          // TODO: Handle the error in some way
+          console.log('The supplied redirect_uri was invalid');
       }
       localStorage.setItem('passedState', this.state);
       localStorage.setItem('passedRedirectUri', this.redirectUri);

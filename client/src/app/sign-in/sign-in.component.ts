@@ -17,12 +17,13 @@ export class SignInComponent implements OnInit {
 
   public email = new FormControl('');
   public state;
+  public redirectUri;
 
   private busy_ = new BehaviorSubject(false);
   public busy = this.busy_.asObservable();
 
   private shouldShowEmailCollectionForm_ = new BehaviorSubject(false);
-  public shouldShowEmailCollectionForm = this.busy_.asObservable();
+  public shouldShowEmailCollectionForm = this.shouldShowEmailCollectionForm_.asObservable();
 
   private errorMessage_ = new BehaviorSubject('');
   public errorMessage = this.errorMessage_.asObservable();
@@ -39,13 +40,15 @@ export class SignInComponent implements OnInit {
     this.route.queryParams.subscribe(params => {
       this.email.setValue(params['email'] ? params['email'] : '');
       this.state = params['state'];
+      this.redirectUri = params['redirect_uri'];
     });
 
-    // This code block is duplicated in both sign-up and sign-in...
-    if (!this.state || this.state.length < 5) {
-      console.log('Supplied state is invalid, this should mean that when this calls back on a client it will reject');
+    if (!this.redirectUri) {
+      // TODO: Handle the error in some way
+      console.log('The supplied redirect_uri was invalid');
     }
     localStorage.setItem('passedState', this.state);
+    localStorage.setItem('passedRedirectUri', this.redirectUri);
   }
 
   public async signIn() {
