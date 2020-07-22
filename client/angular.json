@@ -97,5 +97,10 @@
       }
     }
   },
-  "defaultProject": "cognito-email-auth-client"
+  "defaultProject": "cognito-email-auth-client",
+  "schematics": {
+    "@schematics/angular:component": {
+      "styleext": "scss"
+    }
+  }
 }
