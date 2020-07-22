@@ -40,6 +40,12 @@ export class SignUpComponent implements OnInit  {
           this.email.setValue(params['email'] ? params['email'] : '');
           this.state = params['state'];
       });
+
+      // This code block is duplicated in both sign-up nad sign-in...
+      if (!this.state || this.state.length < 5) {
+          console.log('Supplied state is invalid, this should mean that when this calls back on a client it will reject');
+      }
+      localStorage.setItem('passedState', this.state);
   }
 
   public async signUp() {

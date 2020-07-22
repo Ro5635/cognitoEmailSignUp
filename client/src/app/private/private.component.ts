@@ -30,7 +30,7 @@ export class PrivateComponent implements OnInit {
       const { idToken }: { idToken: IdToken } = await this.auth.getIdTokenFromSession();
       const { jwtToken } = idToken;
 
-      const state = '__STATE__';
+      const state = localStorage.getItem('passedState');
       const baseUrl = 'https://uat.meetbel.com';
 
       console.log('Returning user to the app with id_token and state');
