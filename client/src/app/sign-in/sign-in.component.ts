@@ -41,7 +41,7 @@ export class SignInComponent implements OnInit {
       this.state = params['state'];
     });
 
-    // This code block is duplicated in both sign-up nad sign-in...
+    // This code block is duplicated in both sign-up and sign-in...
     if (!this.state || this.state.length < 5) {
       console.log('Supplied state is invalid, this should mean that when this calls back on a client it will reject');
     }

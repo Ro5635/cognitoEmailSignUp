@@ -17,6 +17,7 @@ export class SignUpComponent implements OnInit  {
 
   email = new FormControl('');
   public state;
+  public redirectUri;
 
   private busy_ = new BehaviorSubject(false);
   public busy = this.busy_.asObservable();
@@ -39,13 +40,20 @@ export class SignUpComponent implements OnInit  {
       this.route.queryParams.subscribe(params => {
           this.email.setValue(params['email'] ? params['email'] : '');
           this.state = params['state'];
+          this.redirectUri = params['redirect_uri'];
       });
 
-      // This code block is duplicated in both sign-up nad sign-in...
+      // This code block is duplicated in both sign-up and sign-in...
       if (!this.state || this.state.length < 5) {
           console.log('Supplied state is invalid, this should mean that when this calls back on a client it will reject');
       }
+
+      if (!this.redirectUri) {
+          // Handle the error in some way
+          console.log('The supplied redirect_uri eas invalid');
+      }
       localStorage.setItem('passedState', this.state);
+      localStorage.setItem('passedRedirectUri', this.redirectUri);
   }
 
   public async signUp() {

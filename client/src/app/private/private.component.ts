@@ -4,7 +4,7 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { AuthService } from '../auth.service';
 import { BehaviorSubject } from 'rxjs';
-import { FormGroup, FormControl } from '@angular/forms';
+import { environment } from '../../environments/environment';
 import {IdToken} from '../IdToken';
 
 @Component({
@@ -31,10 +31,17 @@ export class PrivateComponent implements OnInit {
       const { jwtToken } = idToken;
 
       const state = localStorage.getItem('passedState');
-      const baseUrl = 'https://uat.meetbel.com';
+      const redirectUri = localStorage.getItem('passedRedirectUri');
+      const redirectUriAllowList = environment.redirectUriAllowList;
+
+      const redirectInAllowList = redirectUriAllowList.filter(allowedRedirect => allowedRedirect === redirectUri).length === 1;
+
+      if (!redirectInAllowList) {
+        throw new Error('Provided redirect URI is not present in redirectUriAllowList');
+      }
 
       console.log('Returning user to the app with id_token and state');
-      window.location.href = `${baseUrl}/sign-up#id_token=${jwtToken}&state=${state}`;
+      window.location.href = `${redirectUri}#id_token=${jwtToken}&state=${state}`;
     } catch (err) {
       this.errorMessage_.next(err.message || err);
     }
