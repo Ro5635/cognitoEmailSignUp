@@ -2,8 +2,16 @@
    Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
    SPDX-License-Identifier: MIT-0
 -->
+<div fxFlex="1 1 auto" class="emailDispatchNotification" *ngIf="!shouldShowEmailCollectionForm">
+    <div class="emailDispatchNotification_spinner">
+        <mat-spinner></mat-spinner>
+    </div>
+    <div class="emailDispatchNotification_detail">
+        <h3>Creating your account and sending your sign-in code to {{email.value}}</h3>
+    </div>
+</div>
 
-<mat-card fxFlex="1 1 auto" ngClass="app-card">
+<mat-card fxFlex="1 1 auto" ngClass="app-card" *ngIf="shouldShowEmailCollectionForm">
 
   <mat-card-header>
     <mat-icon mat-card-avatar>lock</mat-icon>

@@ -1,0 +1,17 @@
+/*
+   Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+   SPDX-License-Identifier: MIT-0
+*/
+
+.emailDispatchNotification {
+&_spinner{
+     display: flex;
+     justify-content: center;
+     align-items: center;
+ }
+
+&_detail {
+     margin-top: 25px;
+     text-align: center;
+ }
+}
