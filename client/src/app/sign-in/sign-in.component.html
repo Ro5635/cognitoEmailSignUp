@@ -4,29 +4,15 @@
 -->
 
 <div fxFlex="1 1 auto" class="emailDispatchNotification" *ngIf="!shouldShowEmailCollectionForm">
+    <div class="emailDispatchNotification_spinner">
+        <mat-spinner></mat-spinner>
+    </div>
+    <div class="emailDispatchNotification_detail">
+        <h3>Sending your sign-in code to {{email.value}}</h3>
+    </div>
+</div>
 
 <mat-card fxFlex="1 1 auto" ngClass="app-card" *ngIf="shouldShowEmailCollectionForm">
-    <mat-icon mat-card-avatar>lock</mat-icon>
-    <mat-card-title>Your one-time secret sign-in code is on its way</mat-card-title>
-    <mat-card-subtitle>were send you a one-time secret sign-in code</mat-card-subtitle>
-  </mat-card-header>
-
-  <mat-card-content>
-    <form fxLayout="column">
-      <mat-form-field>
-        <input matInput placeholder="E-mail" [formControl]="email" type="email" email name="email"
-          autocomplete="username email" />
-      </mat-form-field>
-    </form>
-  </mat-card-content>
-
-
-  <p *ngIf="errorMessage | async">{{ errorMessage | async }}</p>
-
-</mat-card>
-
-
-<mat-card fxFlex="1 1 auto" ngClass="app-card" *ngIf="showEmailCollectionForm">
 
     <mat-card-header>
         <mat-icon mat-card-avatar>lock</mat-icon>
@@ -47,7 +33,7 @@
         <div fxFlex></div>
         <button mat-stroked-button color="primary" (click)="signIn()" [disabled]="(busy | async)">
             <div fxFlex></div>
-            <div *ngIf="!(busy | async)">SEND SIGN-IN CODE</div>
+            <div *ngIf="!(busy | async)">Send Sign-In Code</div>
             <mat-spinner *ngIf="busy | async" [diameter]="35"></mat-spinner>
             <div fxFlex></div>
         </button>
@@ -55,10 +41,5 @@
     </mat-card-actions>
 
     <p *ngIf="errorMessage | async">{{ errorMessage | async }}</p>
-
-    <mat-card-content>
-        <div fxFlex></div>
-<!--        <p>Not a member yet? <a routerLink='/sign-up' routerLinkActive="active">Sign up</a></p>-->
-    </mat-card-content>
 
 </mat-card>
