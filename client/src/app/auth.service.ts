@@ -5,6 +5,7 @@ import { Injectable, Inject } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { Auth } from 'aws-amplify';
 import { CognitoUser } from 'amazon-cognito-identity-js';
+import {IdToken} from './IdToken';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +13,7 @@ import { CognitoUser } from 'amazon-cognito-identity-js';
 export class AuthService {
 
   private cognitoUser: CognitoUser & { challengeParam: { email: string } };
+  private currentSession;
 
   // Get access to window object in the Angular way
   private window: Window;
@@ -29,6 +31,12 @@ export class AuthService {
 
   public async answerCustomChallenge(answer: string) {
     this.cognitoUser = await Auth.sendCustomChallengeAnswer(this.cognitoUser, answer);
+    // const currentSession = await Auth.currentSession();
+    // console.log('test');
+    // console.log(JSON.stringify(currentSession));
+    // console.log('after');
+
+
     return this.isAuthenticated();
   }
 
@@ -36,13 +44,10 @@ export class AuthService {
     return this.cognitoUser.challengeParam;
   }
 
-  public async signUp(email: string, fullName: string) {
+  public async signUp(email: string) {
     const params = {
       username: email,
       password: this.getRandomString(30),
-      attributes: {
-        name: fullName
-      }
     };
     await Auth.signUp(params);
   }
@@ -59,11 +64,19 @@ export class AuthService {
 
   public async isAuthenticated() {
     try {
-      await Auth.currentSession();
+      this.currentSession = await Auth.currentSession();
+
       return true;
     } catch {
       return false;
     }
+  }
+
+  public async getIdTokenFromSession() {
+    if (this.currentSession) {
+      return { idToken: this.currentSession.idToken };
+    }
+    // Handle Error
   }
 
   public async getUserDetails() {
